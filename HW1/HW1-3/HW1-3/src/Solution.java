@@ -1,11 +1,8 @@
 import java.util.List;
-import java.util.Map;
 import java.util.LinkedList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Map;
-import java.util.HashMap;
 
 public class Solution {
 
@@ -28,11 +25,11 @@ public class Solution {
     }
 
     public static Boolean notsame(pair x, pair y){
-        if (x.first != y.first && x.first != y.second && x.second != y.first && x.second != y.second){
-            return true;
-        }
-        else{
-            return false;
+        if (x.first.equals(y.first) || x.first.equals(y.second) || x.second.equals(y.first) || x.second.equals(y.second)){
+            return false; 
+        } 
+        else {
+            return true; 
         }
     }
     
@@ -44,7 +41,6 @@ public class Solution {
                 sums.add(new pair(a[m]+a[n], a[m], a[n]));
             }
         }
-
         Collections.sort(sums);
         int i = 0;
         int j = sums.size() - 1;
