@@ -2,152 +2,75 @@ import java.util.List;
 import java.util.Map;
 import java.util.LinkedList;
 import java.util.ArrayList;
-import java.util.Arrays; 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 import java.util.HashMap;
 
 public class Solution {
-    public static List<Integer[]> twoSum(Integer[] nums, int t) {
-        Map<Integer, Integer> Nums = new HashMap<Integer, Integer>();
-        int targetMinusNum;
-        List<Integer[]> ans = new LinkedList<>();
-        for (int i = 0; i < nums.length; i++){
-            targetMinusNum = t - nums[i];
-            if (Nums.containsKey(targetMinusNum)){
-                Integer[] answer = {0, 0};
-                answer[0] = nums[i];
-                answer[1] = targetMinusNum;
-                Arrays.sort(answer);
-                ans.add(answer);
-            }
-            else{
-                Nums.put(nums[i], i);
-            }
+
+    public static class pair implements Comparable<Solution.pair> {
+        Integer sum;
+        Integer first;
+        Integer second;
+
+        pair(int S, int f, int s){
+            this.sum = S;
+            this.first = f;
+            this.second = s;
         }
-        return ans;
+
+        @Override
+        public int compareTo(Solution.pair o) {
+            return this.sum - o.sum;
+        }
+
+    }
+
+    public static Boolean notsame(pair x, pair y){
+        if (x.first != y.first && x.first != y.second && x.second != y.first && x.second != y.second){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
     
-    public static List<int[]> fourSum(int[] a, int tar) {
+    public static List<int[]> fourSum(int[] a, int target) {
         List<int[]> ans = new LinkedList<>();
-        Map<Integer, Integer> nums = new HashMap<Integer, Integer>();
-        Arrays.sort(a);
-        //n = index
-        for (int n = 0; n < a.length; n++){
-            nums.put(n, a[n]);
-        }
-
-        for (int m = 0; m < nums.size(); m++){
-            for (int i = m+1; i < nums.size(); i++){
-                int targets = tar - (nums.get(i) + nums.get(m));
-                Map<Integer, Integer> nums_rm = new HashMap<Integer, Integer>(nums);
-                nums_rm.remove(i);
-                nums_rm.remove(m);
-                //create array of numbers
-                List<Integer> numsArray = new ArrayList<>();
-                for (Map.Entry<Integer, Integer> entry : nums_rm.entrySet()){
-                    numsArray.add(entry.getValue());
-                }
-                Integer[] numsarray = numsArray.toArray(new Integer[0]);
-                List<Integer[]>pairs = twoSum(numsarray, targets);
-                int[] quad = {0, 0, 0, 0};
-                for (int n = 0; n < pairs.size(); n++){
-                    quad[0] = nums.get(i);
-                    quad[1] = nums.get(m);
-                    quad[2] = pairs.get(n)[0];
-                    quad[3] = pairs.get(n)[1];
-                    Arrays.sort(quad);
-                    int diffTimes2 = 0;
-                    for (int k = 0; k < ans.size(); k++){
-                        int[] cases = ans.get(k);
-                        if(!Arrays.equals(cases, quad)){
-                        diffTimes2++;
-                        }
-                    }
-                    if (diffTimes2 == ans.size()){
-                        ans.add(quad);
-                    }
-                }
-                
+        List<pair> sums = new ArrayList<>();
+        for (int m = 0; m < a.length; m++){
+            for (int n = m+1; n < a.length; n++){
+                sums.add(new pair(a[m]+a[n], a[m], a[n]));
             }
         }
 
-        
-
-        
-
-        // //two negative & two positive numbers
-        // List<int[]> ans2to2 = new LinkedList<>();
-        // //form map of pairs, pair as key item as sum.
-        // Map<int[], Integer> posPairMap = new HashMap<int[], Integer>();
-        // for (int k = 0; k < posArray.length; k++){
-        //     for (int l = k+1; l <posArray.length; l++){
-        //         int[] pair = {posArray[k], posArray[l]};
-        //         posPairMap.put(pair, posArray[k]+posArray[l]);
-        //     }
-        // }
-        // Map<int[], Integer> negPairMap = new HashMap<int[], Integer>();
-        // for (int k = 0; k < negArray.length; k++){
-        //     for (int l = k+1; l <negArray.length; l++){
-        //         int[] pair = {negArray[k], negArray[l]};
-        //         negPairMap.put(pair, negArray[k]+negArray[l]);
-        //     }
-        // }
-        // int iter = 0;
-        // Map<Integer, int[]> pospairitem = new HashMap<Integer, int[]>();
-        // for (Map.Entry<int[], Integer> entry3 : posPairMap.entrySet()){
-        //     pospairitem.put(iter, entry3.getKey());
-        //     iter++;
-        // }
-        // for (Map.Entry<int[], Integer> entry2 : negPairMap.entrySet()){
-        //     int target2 = 0-entry2.getValue();
-        //     if (posPairMap.containsValue(target2)){
-        //         for (int m = 0; m <= target2/2; m++){
-        //             int[] targetpair = {m, target2-m};
-        //             int[] inv_targetpair = {target2-m, m};
-        //             Boolean b = pospairitem.containsValue(targetpair);
-        //             if (pospairitem.containsValue(targetpair)){
-        //                 int[] pair2to2 = {0, 0, 0, 0};
-        //                 pair2to2[0]=entry2.getKey()[0];
-        //                 pair2to2[1]=entry2.getKey()[1];
-        //                 pair2to2[2]=targetpair[0];
-        //                 pair2to2[3]=targetpair[1];
-        //                 Arrays.sort(pair2to2);
-        //                 int diffTimes2 = 0;
-        //                 for (int k = 0; k < ans2to2.size(); k++){
-        //                     int[] cases2 = ans2to2.get(k);
-        //                     if(!Arrays.equals(cases2, pair2to2)){
-        //                     diffTimes2++;
-        //                     }
-        //                 }
-        //                 if (diffTimes2 == ans2to2.size()){
-        //                     ans2to2.add(pair2to2);
-        //                     ans.add(pair2to2);
-        //                 }
-        //             }
-        //             else if (posPairMap.containsKey(inv_targetpair)){
-        //                 int[] pair2to2 = {0, 0, 0, 0};
-        //                 pair2to2[0]=entry2.getKey()[0];
-        //                 pair2to2[1]=entry2.getKey()[1];
-        //                 pair2to2[2]=inv_targetpair[0];
-        //                 pair2to2[3]=inv_targetpair[1];
-        //                 Arrays.sort(pair2to2);
-        //                 int diffTimes2 = 0;
-        //                 for (int k = 0; k < ans2to2.size(); k++){
-        //                     int[] cases2 = ans2to2.get(k);
-        //                     if(!Arrays.equals(cases2, pair2to2)){
-        //                     diffTimes2++;
-        //                     }
-        //                 }
-        //                 if (diffTimes2 == ans2to2.size()){
-        //                     ans2to2.add(pair2to2);
-        //                     ans.add(pair2to2);
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-
-        
+        Collections.sort(sums);
+        int i = 0;
+        int j = sums.size() - 1;
+        while(i < j){
+            if(sums.get(i).sum+sums.get(j).sum == target && notsame(sums.get(i), sums.get(j))){
+                int[] answer = {sums.get(i).first, sums.get(i).second, sums.get(j).first, sums.get(j).second};
+                Arrays.sort(answer);
+                int diffTimes2 = 0;
+                for (int k = 0; k < ans.size(); k++){
+                    int[] cases = ans.get(k);
+                    if(!Arrays.equals(cases, answer)){
+                    diffTimes2++;
+                    }
+                }
+                if (diffTimes2 == ans.size()){
+                    ans.add(answer);
+                }
+                i++;
+            }
+            else if(sums.get(i).sum+sums.get(j).sum < target){
+                i++;
+            }
+            else{
+                j--;
+            }
+        }
 
         return ans;
     }
