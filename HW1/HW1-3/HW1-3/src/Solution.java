@@ -30,6 +30,7 @@ public class Solution {
     public static List<int[]> fourSum(int[] a, int tar) {
         List<int[]> ans = new LinkedList<>();
         Map<Integer, Integer> nums = new HashMap<Integer, Integer>();
+        Arrays.sort(a);
         //n = index
         for (int n = 0; n < a.length; n++){
             nums.put(n, a[n]);
