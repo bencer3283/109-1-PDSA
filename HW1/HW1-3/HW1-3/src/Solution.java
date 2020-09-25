@@ -66,7 +66,7 @@ public class Solution {
                         diffTimes2++;
                         }
                     }
-                    if (diffTimes2 == ans.size() && notsame(sums.get(i), sums.get(j))){
+                    if (diffTimes2 == ans.size() && notsame(sums.get(i), sums.get(p))){
                         ans.add(answer);
                     }
                     p--;
