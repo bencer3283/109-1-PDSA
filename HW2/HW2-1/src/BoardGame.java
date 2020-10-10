@@ -20,8 +20,7 @@ public class BoardGame {
         board = h*w;
         
     }
-
-
+    
     public void putStone(int[] x, int[] y, char Type) {
         // put stones on the board according to the coordinate
         for(int i = 0; i < x.length; i++){
