@@ -9,7 +9,7 @@ public class Percolation {
     int n;
     boolean justOpened = false;
     WeightedQuickUnionUF gridConnect;
-    HashMap<Integer, Boolean> openedSites = new HashMap<Integer, Boolean>();
+    HashMap<Integer, Integer> openedSites = new HashMap<Integer, Integer>();
     HashMap<Integer, ArrayList<Integer>> family = new HashMap<Integer, ArrayList<Integer>>();
 
     public Percolation(int N) {
@@ -46,8 +46,8 @@ public class Percolation {
 
     public void open(int row, int column) {
         // open site (row , column) if it is not open already
+        justOpened = true;
         int pos = n*(row) + column;
-        openedSites.put(pos, true);
         //connect();
         int left = n*row + column - 1;
         int right = n*row + column + 1;
@@ -95,7 +95,7 @@ public class Percolation {
             if(openedSites.containsKey(top)) gridConnect.union(top, pos);
             if(openedSites.containsKey(bottom)) gridConnect.union(bottom, pos);
         }
-        justOpened = true;
+        openedSites.put(pos, gridConnect.find(pos));
             
     }
 
@@ -122,8 +122,8 @@ public class Percolation {
     public boolean percolates() {
         if(justOpened) familyMapping();
         // does the system percolate?
-        for(Map.Entry element : family.entrySet()){
-            ArrayList<Integer> union = (ArrayList<Integer>)element.getValue();
+        for(Map.Entry familyArray : family.entrySet()){
+            ArrayList<Integer> union = (ArrayList<Integer>)familyArray.getValue();
             for(int m = 0; m < union.size(); m++){
                 if(openedSites.containsKey(union.get(m)) && union.get(m) < n){
                     for(int p = 0; p < union.size(); p++){
