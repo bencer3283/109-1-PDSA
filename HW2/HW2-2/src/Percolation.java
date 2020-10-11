@@ -6,7 +6,6 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
     int n;
-    boolean justOpened = false;
     WeightedQuickUnionUF gridConnect;
     HashMap<Integer, Integer> openedSites = new HashMap<Integer, Integer>();
     HashMap<Integer, Integer> bottomCanonical = new HashMap<Integer, Integer>();
@@ -18,76 +17,59 @@ public class Percolation {
         n=N;
     }
 
-    // public void familyMapping(){
-    //     family.clear();
-    //     for(Map.Entry sites : openedSites.entrySet()){
-    //         // maintain family map
-    //         int pos = (int)sites.getKey();
-    //         int canonical = gridConnect.find(pos);
-    //         if(family.containsKey(canonical)) family.get(canonical).add(pos);
-    //         else{
-    //             ArrayList<Integer> union = new ArrayList<Integer>();
-    //             family.put(canonical, union);
-    //             family.get(canonical).add(pos);
-    //         }
-    //     }
-    //     justOpened = false;
-        
-    // }
-
     public void open(int row, int column) {
         // open site (row , column) if it is not open already
-        justOpened = true;
         int pos = n*(row) + column;
-        //connect();
-        int left = n*row + column - 1;
-        int right = n*row + column + 1;
-        int top = n*(row-1) + column;
-        int bottom = n*(row+1) + column;
-        if(row == 0 && column != 0 && column != n-1){
-            if(openedSites.containsKey(left)) gridConnect.union(left, pos);
-            if(openedSites.containsKey(right)) gridConnect.union(right, pos);
-            if(openedSites.containsKey(bottom)) gridConnect.union(bottom, pos);
-        }
-        else if(row == n-1 && column != 0 && column != n-1){
-            if(openedSites.containsKey(left)) gridConnect.union(left, pos);
-            if(openedSites.containsKey(right)) gridConnect.union(right, pos);
-            if(openedSites.containsKey(top)) gridConnect.union(top, pos);
-        }
-        else if(column == 0 && row != 0 && row != n-1){
-            if(openedSites.containsKey(right)) gridConnect.union(right, pos);
-            if(openedSites.containsKey(top)) gridConnect.union(top, pos);
-            if(openedSites.containsKey(bottom)) gridConnect.union(bottom, pos);
-        }
-        else if(column == n-1 && row != 0 && row != n-1){
-            if(openedSites.containsKey(left)) gridConnect.union(left, pos);
-            if(openedSites.containsKey(top)) gridConnect.union(top, pos);
-            if(openedSites.containsKey(bottom)) gridConnect.union(bottom ,pos);
-        }
-        else if(pos == 0){
-            if(openedSites.containsKey(right)) gridConnect.union(right, pos);
-            if(openedSites.containsKey(bottom)) gridConnect.union(bottom, pos);
-        }
-        else if(pos == n-1){
-            if(openedSites.containsKey(left)) gridConnect.union(left, pos);
-            if(openedSites.containsKey(bottom)) gridConnect.union(bottom, pos);
-        }
-        else if(pos == (n-1)*n){
-            if(openedSites.containsKey(right)) gridConnect.union(right, pos);
-            if(openedSites.containsKey(top)) gridConnect.union(top, pos);
-        }
-        else if(pos == (n*n)-1){
-            if(openedSites.containsKey(left)) gridConnect.union(left, pos);
-            if(openedSites.containsKey(top)) gridConnect.union(top, pos); 
-        }
-        else{
-            if(openedSites.containsKey(left)) gridConnect.union(left, pos);
-            if(openedSites.containsKey(right)) gridConnect.union(right, pos);
-            if(openedSites.containsKey(top)) gridConnect.union(top, pos);
-            if(openedSites.containsKey(bottom)) gridConnect.union(bottom, pos);
-        }
-        openedSites.put(pos, gridConnect.find(pos));
-            
+        if(!openedSites.containsKey(pos)){
+            //connect();
+            int left = n*row + column - 1;
+            int right = n*row + column + 1;
+            int top = n*(row-1) + column;
+            int bottom = n*(row+1) + column;
+            if(row == 0 && column != 0 && column != n-1){
+                if(openedSites.containsKey(left)) gridConnect.union(left, pos);
+                if(openedSites.containsKey(right)) gridConnect.union(right, pos);
+                if(openedSites.containsKey(bottom)) gridConnect.union(bottom, pos);
+            }
+            else if(row == n-1 && column != 0 && column != n-1){
+                if(openedSites.containsKey(left)) gridConnect.union(left, pos);
+                if(openedSites.containsKey(right)) gridConnect.union(right, pos);
+                if(openedSites.containsKey(top)) gridConnect.union(top, pos);
+            }
+            else if(column == 0 && row != 0 && row != n-1){
+                if(openedSites.containsKey(right)) gridConnect.union(right, pos);
+                if(openedSites.containsKey(top)) gridConnect.union(top, pos);
+                if(openedSites.containsKey(bottom)) gridConnect.union(bottom, pos);
+            }
+            else if(column == n-1 && row != 0 && row != n-1){
+                if(openedSites.containsKey(left)) gridConnect.union(left, pos);
+                if(openedSites.containsKey(top)) gridConnect.union(top, pos);
+                if(openedSites.containsKey(bottom)) gridConnect.union(bottom ,pos);
+            }
+            else if(pos == 0){
+                if(openedSites.containsKey(right)) gridConnect.union(right, pos);
+                if(openedSites.containsKey(bottom)) gridConnect.union(bottom, pos);
+            }
+            else if(pos == n-1){
+                if(openedSites.containsKey(left)) gridConnect.union(left, pos);
+                if(openedSites.containsKey(bottom)) gridConnect.union(bottom, pos);
+            }
+            else if(pos == (n-1)*n){
+                if(openedSites.containsKey(right)) gridConnect.union(right, pos);
+                if(openedSites.containsKey(top)) gridConnect.union(top, pos);
+            }
+            else if(pos == (n*n)-1){
+                if(openedSites.containsKey(left)) gridConnect.union(left, pos);
+                if(openedSites.containsKey(top)) gridConnect.union(top, pos); 
+            }
+            else{
+                if(openedSites.containsKey(left)) gridConnect.union(left, pos);
+                if(openedSites.containsKey(right)) gridConnect.union(right, pos);
+                if(openedSites.containsKey(top)) gridConnect.union(top, pos);
+                if(openedSites.containsKey(bottom)) gridConnect.union(bottom, pos);
+            }
+            openedSites.put(pos, gridConnect.find(pos));
+        }        
     }
 
     public boolean isOpen(int i, int j) {
@@ -150,11 +132,12 @@ public class Percolation {
         // System.out.println(s.isFull(2, 3));
         // System.out.println(s.isOpen(2, 3));
         // System.out.println(s.percolates());
-        for(int i = 0; i < n; i++){
+        for(int i = 0; i < n-1; i++){
             s.open(i, i);
             if (i+1 < n) s.open(i, i+1);
+            s.open(79, 77);
             System.out.println(s.isFull(i, i));
-            System.out.println(s.percolates());
         }
+        System.out.println(s.percolates());
     }
 }
