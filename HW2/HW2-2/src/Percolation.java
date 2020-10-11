@@ -8,7 +8,7 @@ public class Percolation {
     int n;
     WeightedQuickUnionUF gridConnect;
     HashMap<Integer, Integer> openedSites = new HashMap<Integer, Integer>();
-    HashMap<Integer, Integer> bottomCanonical = new HashMap<Integer, Integer>();
+
     public Percolation(int N) {
         // create N-by-N grid, with all sites blocked
         // grid = new boolean[N*N];
@@ -92,13 +92,10 @@ public class Percolation {
     public boolean percolates() {
         // if(justOpened) familyMapping();
         // does the system percolate?
-        bottomCanonical.clear();
-        for(int i = n*(n-1); i < n*n; i++){
-            bottomCanonical.put(i, gridConnect.find(i));
-        }
         for(int i = 0; i < n; i++){
-            if(bottomCanonical.containsValue(gridConnect.find(i))) return true;
+            if(isFull(n-1, i)) return true;
         }
+        
         return false;
     }
     
