@@ -123,22 +123,22 @@ public class Percolation {
     public static void main(String[] args) {
         int n = 80;
         Percolation s = new Percolation(n);
-        // for (int i = 0; i < n; i++){
-        //     for (int j = 0; j < n; j++){
-        //         s.open(i, j);
-        //     }
-        // }
-        // System.out.println(s.isFull(2, 3));
-        // System.out.println(s.isOpen(2, 3));
-        // System.out.println(s.percolates());
-        for(int i = 0; i < n-1; i++){
-            s.open(i, i);
-            if (i+1 < n) s.open(i, i+1);
-            s.open(79, 77);
-            System.out.println(s.isFull(i, i));
-            
+        for (int i = 0; i < n; i++){
+            for (int j = 0; j < n; j++){
+                s.open(i, j);
+            }
         }
-        System.out.println(s.isOpen(79, 79));
+        System.out.println(s.isFull(2, 3));
+        System.out.println(s.isOpen(2, 3));
         System.out.println(s.percolates());
+        // for(int i = 0; i < n-1; i++){
+        //     s.open(i, i);
+        //     if (i+1 < n) s.open(i, i+1);
+        //     s.open(79, 77);
+        //     System.out.println(s.isFull(i, i));
+            
+        // }
+        // System.out.println(s.isOpen(79, 79));
+        // System.out.println(s.percolates());
     }
 }
