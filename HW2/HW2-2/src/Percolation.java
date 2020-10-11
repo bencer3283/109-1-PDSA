@@ -1,7 +1,6 @@
-import java.util.ArrayList;
+
 import java.util.HashMap;
 
-import java.util.Map;
 
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
@@ -10,8 +9,7 @@ public class Percolation {
     boolean justOpened = false;
     WeightedQuickUnionUF gridConnect;
     HashMap<Integer, Integer> openedSites = new HashMap<Integer, Integer>();
-    HashMap<Integer, ArrayList<Integer>> family = new HashMap<Integer, ArrayList<Integer>>();
-
+    HashMap<Integer, Integer> bottomCanonical = new HashMap<Integer, Integer>();
     public Percolation(int N) {
         // create N-by-N grid, with all sites blocked
         // grid = new boolean[N*N];
@@ -20,29 +18,22 @@ public class Percolation {
         n=N;
     }
 
-    public void familyMapping(){
-        // for(int i = 0; i < opened.size(); i++){
-        //     int pos = opened.get(i);
-        //     // connect open sites
-        //     int row = pos/n;
-        //     int column = pos%n;
-            
-        // }
-        family.clear();
-        for(Map.Entry sites : openedSites.entrySet()){
-            // maintain family map
-            int pos = (int)sites.getKey();
-            int canonical = gridConnect.find(pos);
-            if(family.containsKey(canonical)) family.get(canonical).add(pos);
-            else{
-                ArrayList<Integer> union = new ArrayList<Integer>();
-                family.put(canonical, union);
-                family.get(canonical).add(pos);
-            }
-        }
-        justOpened = false;
+    // public void familyMapping(){
+    //     family.clear();
+    //     for(Map.Entry sites : openedSites.entrySet()){
+    //         // maintain family map
+    //         int pos = (int)sites.getKey();
+    //         int canonical = gridConnect.find(pos);
+    //         if(family.containsKey(canonical)) family.get(canonical).add(pos);
+    //         else{
+    //             ArrayList<Integer> union = new ArrayList<Integer>();
+    //             family.put(canonical, union);
+    //             family.get(canonical).add(pos);
+    //         }
+    //     }
+    //     justOpened = false;
         
-    }
+    // }
 
     public void open(int row, int column) {
         // open site (row , column) if it is not open already
@@ -107,69 +98,63 @@ public class Percolation {
     }
 
     public boolean isFull(int i, int j) {
-        if(justOpened) familyMapping();
+        // if(justOpened) familyMapping();
         // is site (row i, column j) full?
         int pos = n*i+j;
-        if(openedSites.containsKey(pos)){
-            int canonical = gridConnect.find(pos);
-            ArrayList<Integer> union = family.get(canonical);
-            for(int m = 0; m < union.size(); m++){
-                if(openedSites.containsKey(union.get(m)) && union.get(m) < n) return true;
-            } 
+        for(int m = 0; m < n; m++){
+            if(openedSites.containsKey(m) && openedSites.get(m) == gridConnect.find(pos)) return true;
         }
         return false;
-    }    
+    }   
+
     public boolean percolates() {
-        if(justOpened) familyMapping();
+        // if(justOpened) familyMapping();
         // does the system percolate?
-        for(Map.Entry familyArray : family.entrySet()){
-            ArrayList<Integer> union = (ArrayList<Integer>)familyArray.getValue();
-            for(int m = 0; m < union.size(); m++){
-                if(openedSites.containsKey(union.get(m)) && union.get(m) < n){
-                    for(int p = 0; p < union.size(); p++){
-                        if(openedSites.containsKey(union.get(p)) && union.get(p) >= n*(n-1)) return true;
-                    }
-                }
-            } 
+        bottomCanonical.clear();
+        for(int i = n*(n-1); i < n*n; i++){
+            bottomCanonical.put(i, gridConnect.find(i));
+        }
+        for(int i = 0; i < n; i++){
+            if(bottomCanonical.containsValue(gridConnect.find(i))) return true;
         }
         return false;
     }
     
-    public static void main(String[] args) {
-        // test
-        Percolation s = new Percolation(3);
-        s.open(1,1);
-        System.out.println(s.isFull(1, 1));
-        System.out.println(s.percolates());
-        s.open(0,1);
-        s.open(2,0);
-        System.out.println(s.isFull(1, 1));
-        System.out.println(s.isFull(0, 1));
-        System.out.println(s.isFull(2, 0));
-        System.out.println(s.percolates());
-        s.open(2,1);
-        System.out.println(s.isFull(1, 1));
-        System.out.println(s.isFull(0, 1));
-        System.out.println(s.isFull(2, 0));
-        System.out.println(s.isFull(2, 1));
-        System.out.println(s.percolates());
-    }
     // public static void main(String[] args) {
-        // test
-        // Percolation s = new Percolation(5);
-        // for (int i = 0; i < 5; i++){
-        //     for (int j = 0; j < 5; j++){
+    //     // test
+    //     Percolation s = new Percolation(3);
+    //     s.open(1,1);
+    //     System.out.println(s.isFull(1, 1));
+    //     System.out.println(s.percolates());
+    //     s.open(0,1);
+    //     s.open(2,0);
+    //     System.out.println(s.isFull(1, 1));
+    //     System.out.println(s.isFull(0, 1));
+    //     System.out.println(s.isFull(2, 0));
+    //     System.out.println(s.percolates());
+    //     s.open(2,1);
+    //     System.out.println(s.isFull(1, 1));
+    //     System.out.println(s.isFull(0, 1));
+    //     System.out.println(s.isFull(2, 0));
+    //     System.out.println(s.isFull(2, 1));
+    //     System.out.println(s.percolates());
+    // }
+    public static void main(String[] args) {
+        int n = 80;
+        Percolation s = new Percolation(n);
+        // for (int i = 0; i < n; i++){
+        //     for (int j = 0; j < n; j++){
         //         s.open(i, j);
         //     }
         // }
         // System.out.println(s.isFull(2, 3));
         // System.out.println(s.isOpen(2, 3));
         // System.out.println(s.percolates());
-        // for(int i = 0; i < 5; i++){
-        //     s.open(i, i);
-        //     if (i+1 < 5) s.open(i, i+1);
-        //     System.out.println(s.isFull(i, i));
-        //     System.out.println(s.percolates());
-        // }
-    // }
+        for(int i = 0; i < n; i++){
+            s.open(i, i);
+            if (i+1 < n) s.open(i, i+1);
+            System.out.println(s.isFull(i, i));
+            System.out.println(s.percolates());
+        }
+    }
 }
