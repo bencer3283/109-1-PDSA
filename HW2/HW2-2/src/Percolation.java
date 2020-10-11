@@ -83,8 +83,11 @@ public class Percolation {
         // if(justOpened) familyMapping();
         // is site (row i, column j) full?
         int pos = n*i+j;
+        // for(int m = 0; m < n; m++){
+        //     if(openedSites.containsKey(m) && openedSites.get(m) == gridConnect.find(pos)) return true;
+        // }
         for(int m = 0; m < n; m++){
-            if(openedSites.containsKey(m) && openedSites.get(m) == gridConnect.find(pos)) return true;
+            if(gridConnect.find(m) == gridConnect.find(pos)) return true;
         }
         return false;
     }   
@@ -95,7 +98,6 @@ public class Percolation {
         for(int i = 0; i < n; i++){
             if(isFull(n-1, i)) return true;
         }
-        
         return false;
     }
     
@@ -134,7 +136,9 @@ public class Percolation {
             if (i+1 < n) s.open(i, i+1);
             s.open(79, 77);
             System.out.println(s.isFull(i, i));
+            
         }
+        System.out.println(s.isOpen(79, 79));
         System.out.println(s.percolates());
     }
 }
