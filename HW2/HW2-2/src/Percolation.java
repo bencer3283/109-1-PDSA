@@ -95,7 +95,7 @@ public class Percolation {
         }
         else if(grid[pos]) {
             for(int m = 0; m < n; m++){
-                if(gridConnect.find(m) == gridConnect.find(pos)) return true;
+                if (grid[m]) if(gridConnect.find(m) == gridConnect.find(pos)) return true;
             }
         }
         return false;
