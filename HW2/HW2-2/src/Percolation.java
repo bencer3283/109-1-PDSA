@@ -93,19 +93,19 @@ public class Percolation {
         if(n == 1) {
             return isOpen(i, j);
         }
-        else{
+        else if(grid[pos]) {
             for(int m = 0; m < n; m++){
                 if(gridConnect.find(m) == gridConnect.find(pos)) return true;
             }
-            return false;
         }
+        return false;
     }   
 
     public boolean percolates() {
         // if(justOpened) familyMapping();
         // does the system percolate?
         for(int i = 0; i < n; i++){
-            if(isFull(n-1, i)) return true;
+            if(grid[n*(n-1)+i]) if(isFull(n-1, i)) return true;
         }
         return false;
     }
