@@ -8,14 +8,14 @@ public class Percolation {
     WeightedQuickUnionUF gridConnect;
     //HashMap<Integer, Integer> openedSites = new HashMap<Integer, Integer>();
     boolean[] grid;
-    ArrayList<Integer> openedfirstrow = new ArrayList<Integer>();
+    //ArrayList<Integer> openedfirstrow = new ArrayList<Integer>();
     ArrayList<Integer> openedlastrow = new ArrayList<Integer>();
 
     public Percolation(int N) {
         // create N-by-N grid, with all sites blocked
         // grid = new boolean[N*N];
         // for(int i = 0; i < grid.length; i++) grid[i]=false;
-        gridConnect = new WeightedQuickUnionUF(N*N);
+        gridConnect = new WeightedQuickUnionUF(N*N+1);
         n=N;
         grid = new boolean[N*N];
         for(int i = 0; i < grid.length; i++){
@@ -31,7 +31,10 @@ public class Percolation {
         }
         else{
             grid[pos] = true;
-            if(pos < n) openedfirstrow.add(pos) ;
+            if(pos < n){
+                //openedfirstrow.add(pos);
+                gridConnect.union(n*n, pos);   
+            }
             if(pos >= n*(n-1)) openedlastrow.add(pos);
             //connect();
             int left = n*row + column - 1;
@@ -100,9 +103,8 @@ public class Percolation {
             return isOpen(i, j);
         }
         else if(grid[pos]) {
-            for(int m = 0; m < openedfirstrow.size(); m++){
-                if (grid[openedfirstrow.get(m)]) if(gridConnect.find(openedfirstrow.get(m)) == gridConnect.find(pos)) return true;
-            }
+            if(gridConnect.find(n*n) == gridConnect.find(pos)) return true;
+            
         }
         return false;
     }   
