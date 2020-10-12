@@ -1,4 +1,6 @@
 
+import java.util.ArrayList;
+
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
@@ -6,6 +8,8 @@ public class Percolation {
     WeightedQuickUnionUF gridConnect;
     //HashMap<Integer, Integer> openedSites = new HashMap<Integer, Integer>();
     boolean[] grid;
+    ArrayList<Integer> openedfirstrow = new ArrayList<Integer>();
+    ArrayList<Integer> openedlastrow = new ArrayList<Integer>();
 
     public Percolation(int N) {
         // create N-by-N grid, with all sites blocked
@@ -27,6 +31,8 @@ public class Percolation {
         }
         else{
             grid[pos] = true;
+            if(pos < n) openedfirstrow.add(pos) ;
+            if(pos >= n*(n-1)) openedlastrow.add(pos);
             //connect();
             int left = n*row + column - 1;
             int right = n*row + column + 1;
@@ -74,7 +80,7 @@ public class Percolation {
                 if(grid[top]) gridConnect.union(top, pos);
                 if(grid[bottom]) gridConnect.union(bottom, pos);
             }
-        }    
+        }   
     }
 
     public boolean isOpen(int i, int j) {
@@ -94,8 +100,8 @@ public class Percolation {
             return isOpen(i, j);
         }
         else if(grid[pos]) {
-            for(int m = 0; m < n; m++){
-                if (grid[m]) if(gridConnect.find(m) == gridConnect.find(pos)) return true;
+            for(int m = 0; m < openedfirstrow.size(); m++){
+                if (grid[openedfirstrow.get(m)]) if(gridConnect.find(openedfirstrow.get(m)) == gridConnect.find(pos)) return true;
             }
         }
         return false;
@@ -104,37 +110,43 @@ public class Percolation {
     public boolean percolates() {
         // if(justOpened) familyMapping();
         // does the system percolate?
-        for(int i = 0; i < n; i++){
-            if(grid[n*(n-1)+i]) if(isFull(n-1, i)) return true;
+        if (n == 1){
+            return isOpen(0, 0);
+        }
+        else{
+            for(int i = 0; i < openedlastrow.size(); i++){
+                int pos = openedlastrow.get(i);
+                if(grid[pos]) if(isFull(pos/n, pos%n)) return true;
+            }
         }
         return false;
     }
     
-    // public static void main(String[] args) {
-    //     // test
-    //     Percolation s = new Percolation(3);
-    //     s.open(1,1);
-    //     System.out.println(s.isFull(1, 1));
-    //     System.out.println(s.percolates());
-    //     s.open(0,1);
-    //     s.open(2,0);
-    //     System.out.println(s.isFull(1, 1));
-    //     System.out.println(s.isFull(0, 1));
-    //     System.out.println(s.isFull(2, 0));
-    //     System.out.println(s.percolates());
-    //     s.open(2,1);
-    //     System.out.println(s.isFull(1, 1));
-    //     System.out.println(s.isFull(0, 1));
-    //     System.out.println(s.isFull(2, 0));
-    //     System.out.println(s.isFull(2, 1));
-    //     System.out.println(s.percolates());
-    // }
     public static void main(String[] args) {
-        int n = 1;
-        Percolation s = new Percolation(n);
-        s.open(0, 0);
-        System.out.println(s.isFull(0, 0)); 
+        // test
+        Percolation s = new Percolation(3);
+        s.open(1,1);
+        System.out.println(s.isFull(1, 1));
         System.out.println(s.percolates());
+        s.open(0,1);
+        s.open(2,0);
+        System.out.println(s.isFull(1, 1));
+        System.out.println(s.isFull(0, 1));
+        System.out.println(s.isFull(2, 0));
+        System.out.println(s.percolates());
+        s.open(2,1);
+        System.out.println(s.isFull(1, 1));
+        System.out.println(s.isFull(0, 1));
+        System.out.println(s.isFull(2, 0));
+        System.out.println(s.isFull(2, 1));
+        System.out.println(s.percolates());
+    }
+    // public static void main(String[] args) {
+    //     int n = 1;
+    //     Percolation s = new Percolation(n);
+    //     s.open(0, 0);
+    //     System.out.println(s.isFull(0, 0)); 
+    //     System.out.println(s.percolates());
         // for (int i = 0; i < n; i++){
         //     for (int j = 0; j < n; j++){
         //         s.open(i, j);
@@ -152,5 +164,5 @@ public class Percolation {
         // }
         // System.out.println(s.isOpen(79, 79));
         // System.out.println(s.percolates());
-    }
+    // }
 }
