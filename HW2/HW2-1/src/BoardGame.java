@@ -1,14 +1,11 @@
-import java.util.ArrayList;
+
 import java.util.HashMap;
 
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 
 public class BoardGame {
-    //HashMap<Integer, Integer> stoneOrder = new HashMap<Integer, Integer>();
     HashMap<Integer, Boolean> stoneType = new HashMap<Integer, Boolean>();
-    //HashMap<Integer, Integer> stonePos = new HashMap<Integer,Integer>();
-    //HashMap<Integer, ArrayList<Integer>> stoneFamily = new HashMap<Integer, ArrayList<Integer>>();
     HashMap<Integer, Integer> familySides = new HashMap<Integer, Integer>();
     WeightedQuickUnionUF stoneConnect;
     int size = 0;
@@ -18,12 +15,9 @@ public class BoardGame {
         
     public BoardGame(int h, int w) {
         // create a board of size h*w
-        //ArrayList<ArrayList<String>> board = new ArrayList<>();
-        board = h*w;
-        stoneConnect = new WeightedQuickUnionUF(board);
+        stoneConnect = new WeightedQuickUnionUF(h*w);
         height = h;
         width = w;
-        
     }
     
     public void putStone(int[] x, int[] y, char Type) {
@@ -32,12 +26,10 @@ public class BoardGame {
             int pos = y[i]+x[i]*100000;
             int index = y[i]*width+x[i];
             boolean type = false;
-            //int order = size + i;
             if(Type == 'O') type = true;
             stoneType.put(pos, type);
             familySides.put(index, 4);
-            //stoneOrder.put(pos, order);
-            //stonePos.put(order, pos);
+
             int left = (x[i]-1)*100000+y[i];
             int indexLeft = (left%100000)*width + (left/100000);
             int right = (x[i]+1)*100000+y[i];
@@ -117,43 +109,14 @@ public class BoardGame {
                 }
             }
         }
-
-        // size = size + x.length;
-
-        // for(int i = 0; i < size; i++){
-        //     int canonical = stoneConnect.find(i);
-        //     if(stoneFamily.containsKey(canonical)){
-        //         stoneFamily.get(canonical).add(i);
-        //     }
-        //     else{
-        //         ArrayList<Integer> family = new ArrayList<Integer>();
-        //         stoneFamily.put(canonical, family);
-        //         stoneFamily.get(canonical).add(i);
-        //     }
-        // }
     }
 
     public boolean surrounded(int x, int y) {
         // Answer if the stone and its connected stones are surrounded by another type of stones
         boolean sides = familySides.get(stoneConnect.find(y*width+x)) == 0;
+        if(height < 3 || width < 3) return false;
         if(sides) return true;
         else return false;
-
-        // int checkPos = x*100000+y;
-        // int checkOrder = stoneOrder.get(checkPos);
-        // int checkCanonical = stoneConnect.find(checkOrder);
-        // ArrayList<Integer> checkFamily = stoneFamily.get(checkCanonical);
-        // for (int i = 0; i < checkFamily.size(); i++){
-        //     int current = stonePos.get(checkFamily.get(i));
-        //     int left =  current - 100000;
-        //     int right = current + 100000;
-        //     int top = current + 1;
-        //     int bottom = current - 1;
-        //     if(stoneType.containsKey(left) == false || stoneType.containsKey(right) == false || stoneType.containsKey(top) == false || stoneType.containsKey(bottom) == false){
-        //         return false;
-        //     }  
-        // }
-        // return true;
     }
 
     public char getStoneType(int x, int y) {
