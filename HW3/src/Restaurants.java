@@ -66,19 +66,19 @@ class Restaurants {
         allrestaurant = restaurants;
         for (int i = 0; i < restaurants.size(); i++){
             if (restaurants.get(i).rating == 1){
-                rate5.add(restaurants.get(i));
+                rate1.add(restaurants.get(i));
             }
             if (restaurants.get(i).rating == 2){
-                rate4.add(restaurants.get(i));
+                rate2.add(restaurants.get(i));
             }
             if (restaurants.get(i).rating == 3){
                 rate3.add(restaurants.get(i));
             }
             if (restaurants.get(i).rating == 4){
-                rate2.add(restaurants.get(i));
+                rate4.add(restaurants.get(i));
             }
             if (restaurants.get(i).rating == 5){
-                rate1.add(restaurants.get(i));
+                rate5.add(restaurants.get(i));
             }
 
         }
@@ -86,32 +86,36 @@ class Restaurants {
 
     public int[] filter(int min_price, int max_price, int min_rate) {
         List<Restaurant> result = new ArrayList<Restaurant>();
-        if(min_rate == 1){
-            result.addAll(rate1);
-        }
-        else if(min_rate == 2){
-            result.addAll(rate1);
-            result.addAll(rate2);
-        }
-        else if(min_rate == 3){
-            result.addAll(rate1);
-            result.addAll(rate2);
-            result.addAll(rate3);
+        List<Restaurant> priceresult = new ArrayList<Restaurant>();
+        if(min_rate == 5){
+            result.addAll(rate5);
         }
         else if(min_rate == 4){
-            result.addAll(rate1);
+            result.addAll(rate4);
+            result.addAll(rate5);
+        }
+        else if(min_rate == 3){
+            result.addAll(rate4);
+            result.addAll(rate5);
+            result.addAll(rate3);
+        }
+        else if(min_rate == 2){
+            result.addAll(rate5);
             result.addAll(rate2);
             result.addAll(rate3);
             result.addAll(rate4);
         }
-        else if(min_rate == 5){
+        else if(min_rate == 1){
             result = allrestaurant;
         }
 
-        Collections.sort(result, new Restaurant.Comparator2());
-        int[] output = new int[result.size()];
         for(int i = 0; i < result.size(); i++){
-            output[i] = result.get(i).ID;
+            if(result.get(i).pricing <= max_price && result.get(i).pricing >= min_price) priceresult.add(result.get(i));
+        } 
+        Collections.sort(priceresult, new Restaurant.Comparator2());
+        int[] output = new int[priceresult.size()];
+        for(int i = 0; i < priceresult.size(); i++){
+            output[i] = priceresult.get(i).ID;
         } 
         return output;
     }
