@@ -26,9 +26,7 @@ class Restaurant implements Comparable<Restaurant> {
 
     @Override
     public int compareTo(Restaurant b) {
-        int comparison = Float.compare((float)this.dist*(float)this.pricing/(float)this.rating, (float)b.dist*(float)b.pricing/(float)b.rating);
-        if(comparison == 0) return 0;
-        else return comparison;
+        return Float.compare((float)this.dist*(float)this.pricing/(float)this.rating, (float)b.dist*(float)b.pricing/(float)b.rating);
     }
 
     public static class Comparator2 implements Comparator<Restaurant>{
