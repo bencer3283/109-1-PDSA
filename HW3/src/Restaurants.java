@@ -10,14 +10,14 @@ class Restaurant implements Comparable<Restaurant> {
     int rating;
     int pricing;
     int dist;
-    float value;
-    
+    //float value;
+
     Restaurant(int id, int rate, int price, int distance) {
         ID = id;
         rating = rate;
         pricing = price;
         dist = distance;
-        value = dist*pricing/rating;        
+        //value = (float)dist* (float)pricing/ (float)rating;    
     }
 
     public int getID() {
@@ -26,11 +26,9 @@ class Restaurant implements Comparable<Restaurant> {
 
     @Override
     public int compareTo(Restaurant b) {
-        int comparison = 0;
-        if(this.value - b.value < 0) comparison = -1;
-        else if(this.value - b.value > 0) comparison = 1;
-        else comparison = 0;
-        return comparison;
+        int comparison = Float.compare((float)this.dist* (float)this.pricing/ (float)this.rating, (float)b.dist* (float)b.pricing/ (float)b.rating);
+        if(comparison == 0) return 1;
+        else return comparison;
     }
 
     public static class Comparator2 implements Comparator<Restaurant>{
@@ -47,7 +45,7 @@ class Restaurant implements Comparable<Restaurant> {
             if(a.rating != b.rating) return a.rating - b.rating;
             else{
                 if(a.dist != b.dist) return a.dist - b.dist;
-                else return -(a.ID - b.ID);
+                else return b.ID - a.ID;
             }
         }
     }
