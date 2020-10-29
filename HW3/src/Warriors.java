@@ -1,7 +1,5 @@
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import edu.princeton.cs.algs4.ST;
 import edu.princeton.cs.algs4.Stack;
 
 public class Warriors {
@@ -9,10 +7,22 @@ public class Warriors {
     public int[] warriors(int[] strength, int[] range) {
         //Given the attributes of each warriors and output the minimal and maximum 
         //index of warrior can be attacked by each warrior.
-        int[] ans = new int[strength.length];
+        int[] ans = new int[strength.length*2];
+        ans[0] = 0;
+        ans[strength.length*2 - 1] = strength.length - 1;
         Stack<Integer> fromLeft = new Stack<Integer>();
+        Stack<Integer> fromRight = new Stack<Integer>();
         for(int i = 0; i < strength.length; i++){
-            if(strength[i] <= fromLeft.peek()) fromLeft.push(i);
+            while(fromLeft.size() != 0 && strength[i] > strength[fromLeft.peek()]){
+                ans[fromLeft.pop()*2+1] = i - 1;
+            }
+            fromLeft.push(i);
+        }
+        for(int i = strength.length-1; i >= 0; i--){
+            while(fromRight.size() != 0 && strength[i] > strength[fromRight.peek()]){
+                ans[fromRight.pop()*2] = i + 1;
+            }
+            fromRight.push(i);
         }
         return ans;
     }
