@@ -1,5 +1,6 @@
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.lang.Math;
 import edu.princeton.cs.algs4.Point2D;
@@ -28,6 +29,20 @@ class Airport {
     public double airport(List<int[]> houses) {
         // Output smallest average distance with optimal selection of airport location.
         double avg_dis = 0;
+        ArrayList<House> village = new ArrayList<House>();
+        for(int i = 0; i < houses.size(); i++){
+            village.get(i).x = houses.get(i)[0];
+            village.get(i).y = houses.get(i)[1];
+        }
+        Collections.sort(village); //sort by y
+        House origin = village.get(village.size()-1);
+        for(int i = 0; i < village.size(); i++){
+            double delX = village.get(i).x - origin.x;
+            double delY = village.get(i).y - origin.y;
+            double tan = Math.toRadians(delX/delY);
+            village.get(i).angle = Math.toDegrees(Math.atan(tan));
+        }
+        Collections.sort(village, new House.polarComparator());
 
         
         return avg_dis; 
