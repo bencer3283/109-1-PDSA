@@ -12,7 +12,8 @@ class House implements Comparable<House>{
 
     @Override
     public int compareTo(House that) {
-        return this.y-that.y;
+        if(this.y != that.y)return this.y-that.y;
+        else return this.x-that.x; 
     }
 
     public static class polarComparator implements Comparator<House>{
@@ -35,11 +36,11 @@ class Airport {
             hull.remove(last_hull_index);
             return check_CCW(house_i, hull, inner, between);
         }
-        else if(ccw == 0){
-            between.add(hull.get(last_hull_index));
-            hull.remove(last_hull_index);
-            return 0;
-        }
+        // else if(ccw == 0){
+        //     between.add(hull.get(last_hull_index));
+        //     hull.remove(last_hull_index);
+        //     return 0;
+        // }
         else return 0;
     }
     public double airport(List<int[]> houses) {
@@ -81,46 +82,56 @@ class Airport {
             check_CCW(house_i, hull, inner, between);
             hull.add(village.get(i));
         }
+        for(int i = 1; i < hull.size()-1; i++){
+            Point2D me = new Point2D(hull.get(i).x, hull.get(i).y);
+            Point2D prior = new Point2D(hull.get(i-1).x, hull.get(i-1).y);
+            Point2D after= new Point2D(hull.get(i+1).x, hull.get(i+1).y);
+            if(Point2D.ccw(prior, me, after) == 0){
+                between.add(hull.get(i));
+                hull.remove(i);
+                i--;
+            }
+        }
         // calculate inner equivalent point
         double equiX = 0;
         double equiY = 0;
         for (int i = 0; i < inner.size(); i++){
-            equiX += inner.get(i).x;
-            equiY += inner.get(i).y;
+            equiX += inner.get(i).x / inner.size();
+            equiY += inner.get(i).y / inner.size();
         }
-        equiX /= inner.size();
-        equiY /= inner.size();
         // for each possible runway calculate the average distance
-        double lx1 = hull.get(hull.size()-1).x - hull.get(0).x;
-        double ly1 = hull.get(hull.size()-1).y - hull.get(0).y;
+        double lx = hull.get(hull.size()-1).x - hull.get(0).x;
+        double ly = hull.get(hull.size()-1).y - hull.get(0).y;
+        double k = lx*hull.get(0).y - ly*hull.get(0).x;
         for(int i = 0; i < hull.size(); i++){
             double px = hull.get(i).x;
             double py = hull.get(i).y;
-            avg_dis += Math.abs((px*ly1-py*lx1)/Math.sqrt(lx1*lx1+ly1*ly1));
+            avg_dis += Math.abs((px*ly-py*lx+k)/Math.sqrt(lx*lx+ly*ly));
         }
         for(int i = 0; i < between.size(); i++){
             double px = between.get(i).x;
             double py = between.get(i).y;
-            avg_dis += Math.abs((px*ly1-py*lx1)/Math.sqrt(lx1*lx1+ly1*ly1));
+            avg_dis += Math.abs((px*ly-py*lx+k)/Math.sqrt(lx*lx+ly*ly));
         }
-        avg_dis += Math.abs((equiX*ly1-equiY*lx1)/Math.sqrt(lx1*lx1+ly1*ly1))*inner.size();
-        avg_dis /= village.size();
-        for(int i = 0; i < hull.size()-1; i++){
+        avg_dis += Math.abs((equiX*ly-equiY*lx+k)/Math.sqrt(lx*lx+ly*ly))*inner.size();
+        avg_dis /= (village.size()+1);
+        for(int i = 1; i < hull.size()-1; i++){
             double dis = 0;
-            double lx = hull.get(i).x - hull.get(i+1).x;
-            double ly = hull.get(i).y - hull.get(i+1).y;
+            lx = hull.get(i).x - hull.get(i+1).x;
+            ly = hull.get(i).y - hull.get(i+1).y;
+            k = lx*hull.get(i).y - ly*hull.get(i).x;
             for(int j = 0; j < hull.size(); j++){
                 double px = hull.get(j).x;
                 double py = hull.get(j).y;
-                dis += Math.abs((px*ly-py*lx)/Math.sqrt(lx*lx+ly*ly));
+                dis += Math.abs((px*ly-py*lx+k)/Math.sqrt(lx*lx+ly*ly));
             }
             for(int j = 0; j < between.size(); j++){
                 double px = between.get(j).x;
                 double py = between.get(j).y;
-                dis += Math.abs((px*ly-py*lx)/Math.sqrt(lx*lx+ly*ly));
+                dis += Math.abs((px*ly-py*lx+k)/Math.sqrt(lx*lx+ly*ly));
             }
-            dis += Math.abs((equiX*ly-equiY*lx)/Math.sqrt(lx*lx+ly*ly))*inner.size();
-            dis /= village.size();
+            dis += Math.abs((equiX*ly-equiY*lx+k)/Math.sqrt(lx*lx+ly*ly))*inner.size();
+            dis /= (village.size()+1);
             if(Double.compare(dis, avg_dis) < 0) avg_dis = dis;
         }
         return avg_dis;
@@ -128,6 +139,13 @@ class Airport {
 
     public static void main(String[] args) {
         // More example are in Python template
+        System.out.println(new Airport().airport(new ArrayList<int[]>(){{
+            for(int i = 0; i < 10; i++){
+                for(int j = 0; j < 10; j++){
+                    add(new int[]{i,j});
+                }
+            }
+        }}));
         System.out.println(new Airport().airport(new ArrayList<int[]>(){{
             add(new int[]{1,1});
             add(new int[]{2,2});
@@ -138,6 +156,50 @@ class Airport {
             add(new int[]{4,2});
             add(new int[]{4,1});
             add(new int[]{4,0});
+        }}));
+        System.out.println(new Airport().airport(new ArrayList<int[]>(){{
+            add(new int[]{0,0});
+            add(new int[]{2,2});
+            add(new int[]{0,2});
+            add(new int[]{2,0});
+            add(new int[]{1,1});
+        }}));
+        System.out.println(new Airport().airport(new ArrayList<int[]>(){{
+            add(new int[]{0,0});
+            add(new int[]{1,0});
+            add(new int[]{0,1});
+        }}));
+        System.out.println(new Airport().airport(new ArrayList<int[]>(){{
+            add(new int[]{3,1});
+            add(new int[]{8,1});
+            add(new int[]{4,2});
+            add(new int[]{7,2});
+            add(new int[]{10,2});
+            add(new int[]{12,2});
+            add(new int[]{2,3});
+            add(new int[]{3,4});
+            add(new int[]{5,4});
+            add(new int[]{6,4});
+            add(new int[]{9,4});
+            add(new int[]{10,4});
+            add(new int[]{2,5});
+            add(new int[]{4,6});
+            add(new int[]{6,6});
+            add(new int[]{8,6});
+            add(new int[]{10,6});
+            add(new int[]{1,7});
+            add(new int[]{6,7});
+            add(new int[]{3,8});
+            add(new int[]{8,8});
+            add(new int[]{9,8});
+            add(new int[]{11,8});
+            add(new int[]{12,8});
+            add(new int[]{2,9});
+            add(new int[]{5,9});
+            add(new int[]{4,11});
+            add(new int[]{7,11});
+            add(new int[]{6,1});
+            add(new int[]{3,10});
         }}));
     }   
 }
