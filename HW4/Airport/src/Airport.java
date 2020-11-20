@@ -19,14 +19,15 @@ class House implements Comparable<House>{
     public static class polarComparator implements Comparator<House>{
         @Override
         public int compare(House one, House two){
-            return Double.compare(one.angle, two.angle);
+            if(Double.compare(one.angle, two.angle) != 0) return Double.compare(one.angle, two.angle);
+            else return two.y - one.y;
         }
     }
 }
 
 
 class Airport {
-    private int check_CCW(Point2D house_i, List<House> hull, List<House> inner, List<House> between){
+    private int check_CCW(Point2D house_i, List<House> hull, List<House> inner){
         int last_hull_index = hull.size()-1;
         Point2D last_hull = new Point2D(hull.get(last_hull_index).x, hull.get(last_hull_index).y);
         Point2D last_last_hull = new Point2D(hull.get(last_hull_index-1).x, hull.get(last_hull_index-1).y);
@@ -34,13 +35,8 @@ class Airport {
         if(ccw == -1){
             inner.add(hull.get(last_hull_index));
             hull.remove(last_hull_index);
-            return check_CCW(house_i, hull, inner, between);
+            return check_CCW(house_i, hull, inner);
         }
-        // else if(ccw == 0){
-        //     between.add(hull.get(last_hull_index));
-        //     hull.remove(last_hull_index);
-        //     return 0;
-        // }
         else return 0;
     }
     public double airport(List<int[]> houses) {
@@ -79,7 +75,7 @@ class Airport {
         hull.add(village.get(0));
         for(int i = 1; i < village.size(); i++){
             Point2D house_i = new Point2D(village.get(i).x, village.get(i).y);
-            check_CCW(house_i, hull, inner, between);
+            check_CCW(house_i, hull, inner);
             hull.add(village.get(i));
         }
         for(int i = 1; i < hull.size()-1; i++){
@@ -92,12 +88,21 @@ class Airport {
                 i--;
             }
         }
+        Point2D me = new Point2D(hull.get(hull.size()-1).x, hull.get(hull.size()-1).y);
+        Point2D prior = new Point2D(hull.get(hull.size()-2).x, hull.get(hull.size()-2).y);
+        Point2D after= new Point2D(hull.get(0).x, hull.get(0).y);
+        if(Point2D.ccw(prior, me, after) == 0){
+            between.add(hull.get(hull.size()-1));
+            hull.remove(hull.size()-1);
+        }
         // calculate inner equivalent point
         double equiX = 0;
         double equiY = 0;
         for (int i = 0; i < inner.size(); i++){
-            equiX += inner.get(i).x / inner.size();
-            equiY += inner.get(i).y / inner.size();
+            double x = inner.get(i).x;
+            double y = inner.get(i).y;
+            equiX = equiX + (x / inner.size());
+            equiY = equiY + (y / inner.size());
         }
         // for each possible runway calculate the average distance
         double lx = hull.get(hull.size()-1).x - hull.get(0).x;
