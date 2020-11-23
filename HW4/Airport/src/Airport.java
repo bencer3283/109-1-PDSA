@@ -2,7 +2,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.lang.Math;
-import edu.princeton.cs.algs4.Point2D;
+import edu.princeton.cs.algs4.*;
 
 class Airport {
     private int check_CCW(Point2D house_i, List<Point2D> hull){
@@ -34,6 +34,7 @@ class Airport {
         for(int i = 0; i < village.size(); i++){
             if(village.get(i).y() < origin.y()) origin = village.get(i);
         }
+        Collections.sort(village);
         Collections.sort(village, origin.polarOrder());
         hull.add(village.get(0));
         hull.add(village.get(1));
@@ -45,22 +46,34 @@ class Airport {
         // calculate inner equivalent point
         double equiX = 0;
         double equiY = 0;
-        for (int i = 0; i < village.size(); i++){
-            double x = village.get(i).x();
-            double y = village.get(i).y();
-            equiX += x;
-            equiY += y;
+        if(village.size()>2){
+            for (int i = 0; i < village.size(); i++){
+                double x = village.get(i).x();
+                double y = village.get(i).y();
+                equiX += x;
+                equiY += y;
+            }
         }
         double villagesize = village.size();
         equiX /= villagesize;
         equiY /= villagesize;
 
         // for each possible runway calculate the average distance
-        double lx = hull.get(hull.size()-1).x() - hull.get(0).x();
-        double ly = hull.get(hull.size()-1).y() - hull.get(0).y();
-        double k = lx*hull.get(0).y() - ly*hull.get(0).x();
+        avg_dis = 0;
+        double lx = hull.get(0).x() - hull.get(1).x();
+        double ly = hull.get(0).y() - hull.get(1).y();
+        double k = lx*hull.get(0).y() - ly*hull.get(1).x();
         avg_dis += Math.abs((equiX*ly-equiY*lx+k)/Math.sqrt(lx*lx+ly*ly))*village.size();
         avg_dis /= (villagesize);
+        double dis = 0;
+        for(int i = 1; i < hull.size()-1; i++){
+            lx = hull.get(i).x() - hull.get(i+1).x();
+            ly = hull.get(i).y() - hull.get(i+1).y();
+            k = lx*hull.get(i).y() - ly*hull.get(i).x();
+            dis += Math.abs((equiX*ly-equiY*lx+k)/Math.sqrt(lx*lx+ly*ly))*village.size();
+            dis /= (villagesize);
+            if(Double.compare(dis, avg_dis) < 0) avg_dis = dis;
+        }
         return avg_dis;
     }   
 
@@ -128,5 +141,5 @@ class Airport {
             add(new int[]{6,1});
             add(new int[]{3,10});
         }}));
-    }   
+    }
 }
