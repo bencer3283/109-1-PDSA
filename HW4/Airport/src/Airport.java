@@ -35,29 +35,32 @@ class Airport {
         for(int i = 0; i < village.size(); i++){
             if(village.get(i).y() < origin.y()) origin = village.get(i);
         }
-        //Collections.sort(village, Point2D.Y_ORDER);
-        Collections.sort(village, Point2D.X_ORDER);
+        for(int i = 0; i < village.size(); i++){
+            if(village.get(i).y() == origin.y() && village.get(i).x() == origin.x()){
+                village.remove(i);
+                break;
+            }
+        }
+        Collections.sort(village, Point2D.R_ORDER);
         Collections.sort(village, origin.polarOrder());
+        hull.add(origin);
         hull.add(village.get(0));
-        hull.add(village.get(1));
-        for(int i = 2; i < village.size(); i++){
+        for(int i = 1; i < village.size(); i++){
             check_CCW(village.get(i), hull);
             hull.add(village.get(i));
         }
         if(Point2D.ccw(hull.get(hull.size()-1), hull.get(0), hull.get(1)) == 0)hull.remove(0);
         
         // calculate inner equivalent point
-        double equiX = 0;
-        double equiY = 0;
-        if(village.size()>2){
-            for (int i = 0; i < village.size(); i++){
-                double x = village.get(i).x();
-                double y = village.get(i).y();
-                equiX += x;
-                equiY += y;
-            }
+        double equiX = origin.x();
+        double equiY = origin.y();
+        for (int i = 0; i < village.size(); i++){
+            double x = village.get(i).x();
+            double y = village.get(i).y();
+            equiX += x;
+            equiY += y;
         }
-        double villagesize = village.size();
+        double villagesize = village.size() + 1;
         equiX /= villagesize;
         equiY /= villagesize;
 
@@ -65,7 +68,7 @@ class Airport {
         avg_dis = 0;
         double lx = hull.get(hull.size()-1).x() - hull.get(0).x();
         double ly = hull.get(hull.size()-1).y() - hull.get(0).y();
-        double k = lx*hull.get(hull.size()-1).y() - ly*hull.get(0).x();
+        double k = lx*hull.get(0).y() - ly*hull.get(0).x();
         avg_dis = Math.abs((equiX*ly-equiY*lx+k)/Math.sqrt(lx*lx+ly*ly));
         double dis = 0;
         for(int i = 0; i < hull.size()-1; i++){
