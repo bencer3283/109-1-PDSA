@@ -41,7 +41,7 @@ class Airport {
                 break;
             }
         }
-        Collections.sort(village, Point2D.R_ORDER);
+        Collections.sort(village, origin.distanceToOrder());
         Collections.sort(village, origin.polarOrder());
         hull.add(origin);
         hull.add(village.get(0));
@@ -49,7 +49,9 @@ class Airport {
             check_CCW(village.get(i), hull);
             hull.add(village.get(i));
         }
-        if(Point2D.ccw(hull.get(hull.size()-1), hull.get(0), hull.get(1)) == 0)hull.remove(0);
+        if(hull.size() < 3) return 0;
+        if(Point2D.ccw(hull.get(hull.size()-1), hull.get(0), hull.get(1)) == 0) hull.remove(0);
+        if(hull.size()>2 && Point2D.ccw(hull.get(hull.size()-2), hull.get(hull.size()-1), hull.get(0)) == 0) hull.remove(hull.size()-1);
         
         // calculate inner equivalent point
         double equiX = origin.x();
@@ -83,6 +85,43 @@ class Airport {
 
     public static void main(String[] args) {
         // More example are in Python template
+        System.out.println(new Airport().airport(new ArrayList<int[]>(){{
+            add(new int[]{4,12});
+            add(new int[]{2,10});
+            add(new int[]{1,8});
+            add(new int[]{4,1});
+            add(new int[]{3,2});
+            add(new int[]{2,3});
+            add(new int[]{1,5});
+            add(new int[]{1,7});
+            add(new int[]{1,6});
+            add(new int[]{5,0});
+            add(new int[]{6,0});
+            add(new int[]{8,0});
+            add(new int[]{9,0});
+            add(new int[]{7,0});
+            add(new int[]{6,13});
+            add(new int[]{9,13});
+            add(new int[]{11,1});
+            add(new int[]{13,2});
+            add(new int[]{14,5});
+            add(new int[]{14,8});
+            add(new int[]{13,11});
+            add(new int[]{11,12});
+            add(new int[]{9,13});
+        }}));
+        System.out.println(new Airport().airport(new ArrayList<int[]>(){{
+            add(new int[]{1,9});
+            add(new int[]{2,8});
+            add(new int[]{3,7});
+            add(new int[]{4,6});
+            add(new int[]{5,5});
+            add(new int[]{6,4});
+            add(new int[]{7,3});
+            add(new int[]{8,2});
+            add(new int[]{9,1});
+            add(new int[]{10,0});
+        }}));
         System.out.println(new Airport().airport(new ArrayList<int[]>(){{
             add(new int[]{1,1});
             add(new int[]{2,2});
