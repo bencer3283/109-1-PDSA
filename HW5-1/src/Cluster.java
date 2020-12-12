@@ -1,23 +1,16 @@
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.PriorityQueue;
-import java.lang.Math;
 import edu.princeton.cs.algs4.Point2D;
-
-class PairOfCluster{
-    Point2D a;
-    Point2D b;
-    int a_index;
-    int b_index;
-}
+import edu.princeton.cs.algs4.ClosestPair;
 
 class Cluster {
-    public ArrayList<Point2D> cluster(List<int[]> points, int cluster_num) {
-        ArrayList<Point2D> p = new ArrayList<Point2D>();
-        for(int[] i: points) {
-            p.add(new Point2D(i[0], i[1]));
+    public List<double[]> cluster(List<int[]> points, int cluster_num) {
+        Point2D[] p;
+        p = new Point2D[points.size()];
+        for(int i = 0; i < points.size(); i++) {
+            p[i] = new Point2D(points.get(i)[0], points.get(i)[1]);
         }
 
         HashMap<Point2D, ArrayList<Point2D>> clusterMap = new HashMap<Point2D, ArrayList<Point2D>>();
@@ -25,59 +18,87 @@ class Cluster {
             clusterMap.put(i, new ArrayList<Point2D>(){{add(i);}});
         }
         
-        int n = p.size();
+        int n = p.length;
         while(n > cluster_num){
             //find nearest pair of cluster 
-            Collections.sort(p, new Point2D(0, 0).distanceToOrder());
-            PairOfCluster nearestPair = new PairOfCluster();
-            nearestPair.a = p.get(p.size()-1);
-            nearestPair.b = p.get(0);
-            double nearestDis = p.get(p.size()-1).distanceTo(p.get(0));
-            for(int i = 0; i < p.size()-1; i++){
-                double dis = p.get(i).distanceTo(p.get(i+1));
-                if(dis < nearestDis){
-                    nearestDis = dis;
-                    nearestPair.a = p.get(i);
-                    nearestPair.b = p.get(i+1);
-                    nearestPair.a_index = i;
-                    nearestPair.b_index = i+1;
-                }
-            }
+            ClosestPair nearestPair = new ClosestPair(p);
 
             //delete old nearest pair
-            p.remove(nearestPair.b_index);
-            p.remove(nearestPair.a_index);
+            int a_index = 0;
+            int b_index = 0;
+            for(int i = 0; i < p.length; i++){
+                if(p[i].equals(nearestPair.either())){
+                    a_index = i;
+                    break;
+                }
+            }
+            Point2D[] copy = new Point2D[p.length - 1];
+
+            for (int i = 0, j = 0; i < p.length; i++) {
+                if (i != a_index) {
+                    copy[j++] = p[i];
+                }
+            }
+            p = copy;
+            for(int i = 0; i < p.length; i++){
+                if(p[i].equals(nearestPair.other())){
+                    b_index = i;
+                    break;
+                }
+            }
+            Point2D[] copy2 = new Point2D[p.length - 1];
+            for (int i = 0, j = 0; i < p.length; i++) {
+                if (i != b_index) {
+                    copy2[j++] = p[i];
+                }
+            }
+            p = copy2;
 
             //calculate centroid of nearest pair
             double x_sum = 0;
             double y_sum = 0;
-            for(Point2D i: clusterMap.get(nearestPair.a)){
+            for(Point2D i: clusterMap.get(nearestPair.either())){
                 x_sum += i.x();
                 y_sum += i.y();
             }
-            for(Point2D i: clusterMap.get(nearestPair.b)){
+            for(Point2D i: clusterMap.get(nearestPair.other())){
                 x_sum += i.x();
                 y_sum += i.y();
             }
-            x_sum /= (clusterMap.get(nearestPair.a).size()+clusterMap.get(nearestPair.b).size());
-            y_sum /= (clusterMap.get(nearestPair.a).size()+clusterMap.get(nearestPair.b).size());
+            x_sum /= (clusterMap.get(nearestPair.either()).size()+clusterMap.get(nearestPair.other()).size());
+            y_sum /= (clusterMap.get(nearestPair.either()).size()+clusterMap.get(nearestPair.other()).size());
 
             //add new cluster
-            p.add(new Point2D(x_sum, y_sum));
-            ArrayList<Point2D> newcluster = new ArrayList<Point2D>();
-            for(Point2D i: clusterMap.get(nearestPair.a)){
-                newcluster.add(i);
+            Point2D[] copy3 = new Point2D[p.length+1];
+            for(int i = 0; i < p.length; i++){
+                copy3[i] = p[i];
             }
-            for(Point2D i: clusterMap.get(nearestPair.b)){
+            copy3[copy3.length - 1] = new Point2D(x_sum, y_sum);
+            p = copy3;
+            ArrayList<Point2D> newcluster = new ArrayList<Point2D>();
+            for(Point2D i: clusterMap.get(nearestPair.either())){
                 newcluster.add(i);
+                clusterMap.remove(i);
+            }
+            for(Point2D i: clusterMap.get(nearestPair.other())){
+                newcluster.add(i);
+                clusterMap.remove(i);
             }
             clusterMap.put(new Point2D(x_sum, y_sum), newcluster);
             n--;
         }
-        Collections.sort(p, Point2D.Y_ORDER);
-        Collections.sort(p, Point2D.X_ORDER);
+        Arrays.sort(p, Point2D.Y_ORDER);
+        Arrays.sort(p, Point2D.X_ORDER);
 
-        return p;
+        ArrayList<double[]> ans = new ArrayList<double[]>();
+        for(Point2D i : p){
+            double[] subans = new double[2];
+            subans[0] = i.x();
+            subans[1] = i.y();
+            ans.add(subans);
+        }
+
+        return ans;
     }
 
     public static void main(String[] args) {
