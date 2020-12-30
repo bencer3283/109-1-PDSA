@@ -1,5 +1,8 @@
 import java.util.List;
+import java.util.Queue;
 import java.util.ArrayList;
+import java.util.LinkedList;
+
 import edu.princeton.cs.algs4.Bag;
 
 class Teams {
@@ -10,13 +13,18 @@ class Teams {
     public Teams() {}; 
 
     public void dfs(ArrayList<Bag<Integer>> G, int v){
-        markedArray[v] = true;
-        for(int vv: G.get(v)){
-            if(!markedArray[vv]){
-                colorArray[vv] = !colorArray[v];
-                dfs(G, vv);
-            }
-            else if(colorArray[v] == colorArray[vv]) isBipartite = false;
+        Queue<Integer> q = new LinkedList<Integer>();
+        q.add(v);
+        while(!q.isEmpty()){
+            int w = q.remove();
+            markedArray[w] = true;
+            for(int wv: G.get(w)){
+                if(!markedArray[wv]){
+                    q.add(wv);
+                    colorArray[wv] = ! colorArray[w];
+                }
+                else if(colorArray[wv] == colorArray[w]) isBipartite = false;
+            } 
         }
     }
 
