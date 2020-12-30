@@ -1,13 +1,43 @@
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Queue;
-import java.lang.Math;
+import edu.princeton.cs.algs4.Bag;
 
 class Teams {
+    private boolean[] colorArray;
+    private boolean[] markedArray;
+    private boolean isBipartite = true;
+
     public Teams() {}; 
 
+    public void dfs(ArrayList<Bag<Integer>> G, int v){
+        markedArray[v] = true;
+        for(int vv: G.get(v)){
+            if(!markedArray[vv]){
+                colorArray[vv] = !colorArray[v];
+                dfs(G, vv);
+            }
+            else if(colorArray[v] == colorArray[vv]) isBipartite = false;
+        }
+    }
+
     public boolean teams(int idols, List<int[]> teetee) {
-        return true;
+        ArrayList<Bag<Integer>> G = new ArrayList<Bag<Integer>>();
+        for(int i = 0; i < idols; i++){
+            Bag B = new Bag<Integer>();
+            G.add(B);
+        }
+        for(int[] edge: teetee){
+            int a = edge[0];
+            int b = edge[1];
+            G.get(a).add(b);
+            G.get(b).add(a);
+        }
+        colorArray = new boolean[idols];
+        markedArray = new boolean[idols];
+        for(int i = 0; i < idols; i++){
+            if(!markedArray[i]) dfs(G, i);
+        }
+        return isBipartite;
     }   
 
     public static void main(String[] args) {
