@@ -12,7 +12,7 @@ class Teams {
 
     public Teams() {}; 
 
-    public void dfs(ArrayList<Bag<Integer>> G, int v){
+    public void bfs(ArrayList<Bag<Integer>> G, int v){
         Queue<Integer> q = new LinkedList<Integer>();
         q.add(v);
         while(!q.isEmpty()){
@@ -42,9 +42,7 @@ class Teams {
         }
         colorArray = new boolean[idols];
         markedArray = new boolean[idols];
-        for(int i = 0; i < idols; i++){
-            if(!markedArray[i]) dfs(G, i);
-        }
+        bfs(G, 0);
         return isBipartite;
     }   
 
