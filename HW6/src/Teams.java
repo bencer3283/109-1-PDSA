@@ -1,7 +1,7 @@
 import java.util.List;
 import java.util.ArrayList;
 import edu.princeton.cs.algs4.Graph;
-import edu.princeton.cs.algs4.Bipartite;
+import edu.princeton.cs.algs4.BipartiteX;
 
 class Teams {
     public Teams() {};
@@ -11,7 +11,7 @@ class Teams {
         for(int[] edge: teetee){
             G.addEdge(edge[0], edge[1]);
         }
-        Bipartite B = new Bipartite(G);
+        BipartiteX B = new BipartiteX(G);
         return B.isBipartite();
     }   
 
