@@ -1,13 +1,18 @@
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Queue;
-import java.lang.Math;
+import edu.princeton.cs.algs4.Graph;
+import edu.princeton.cs.algs4.Bipartite;
 
 class Teams {
-    public Teams() {}; 
+    public Teams() {};
 
     public boolean teams(int idols, List<int[]> teetee) {
-        return true;
+        Graph G = new Graph(idols);
+        for(int[] edge: teetee){
+            G.addEdge(edge[0], edge[1]);
+        }
+        Bipartite B = new Bipartite(G);
+        return B.isBipartite();
     }   
 
     public static void main(String[] args) {
